@@ -11,7 +11,7 @@ const TodoNew = (props) => {
     // addNewTodo("crocodile");
     const handClick = () => {
         addNewTodo(valueInput);
-        console.log("check valueInput", valueInput);
+        setValueInput("")
 
     }
 
@@ -22,6 +22,7 @@ const TodoNew = (props) => {
         <div className="todo-new">
             <input type="text" placeholder='Enter your task'
                 onChange={(event) => handOnchange(event.target.value)}
+                value={valueInput}
             />
             <button
                 style={{ cursor: "pointer" }}
