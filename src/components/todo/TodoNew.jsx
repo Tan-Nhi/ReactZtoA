@@ -10,6 +10,7 @@ const TodoNew = (props) => {
 
     // addNewTodo("crocodile");
     const handClick = () => {
+        addNewTodo(valueInput);
         console.log("check valueInput", valueInput);
 
     }
