@@ -1,8 +1,9 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Table } from 'antd';
-import UpdateUserModal from './update.user.modal';
+import { notification, Popconfirm, Table } from 'antd';
 import { useState } from 'react';
+import UpdateUserModal from './update.user.modal';
 import ViewUserDetail from './view.user.detail';
+import { deleteUserAPI } from '../../services/api.service';
 
 const UserTable = (props) => {
 
@@ -13,6 +14,22 @@ const UserTable = (props) => {
 
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [dataDetail, setDataDetail] = useState(null)
+
+    const handleDeleteUser = async (id) => {
+        const res = await deleteUserAPI(id);
+        if (res.data) {
+            notification.success({
+                message: 'Delete User Success',
+                description: 'Xóa User thành công',
+            })
+            await loadUser();
+        } else {
+            notification.error({
+                message: 'Error Delete User',
+                description: JSON.stringify(res.message),
+            })
+        }
+    }
 
     const columns = [
         {
@@ -50,7 +67,16 @@ const UserTable = (props) => {
                         style={{ cursor: "pointer", color: "orange" }}
                     />
 
-                    <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
+                    <Popconfirm
+                        title="Xóa người dùng"
+                        description="Bạn có chắc xóa user này?"
+                        onConfirm={() => handleDeleteUser(record._id)}
+                        okText="Yes"
+                        cancelText="No"
+                        placement='left'>
+                        <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
+                    </Popconfirm>
+
                 </div>
             ),
         },
@@ -78,6 +104,9 @@ const UserTable = (props) => {
                 dataDetail={dataDetail}
                 setDataDetail={setDataDetail}
             />
+
+
+
         </>
     );
 
