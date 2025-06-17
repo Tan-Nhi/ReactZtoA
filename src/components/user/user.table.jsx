@@ -1,59 +1,46 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { notification, Popconfirm, Table } from 'antd';
+import { Popconfirm, Table, notification } from 'antd';
 import { useState } from 'react';
+import { deleteUserAPI } from '../../services/api.service';
 import UpdateUserModal from './update.user.modal';
 import ViewUserDetail from './view.user.detail';
-import { deleteUserAPI } from '../../services/api.service';
 
 const UserTable = (props) => {
+    const { dataUsers, loadUser,
 
-    const { dataUsers, loadUser } = props
+        current, pageSize, total,
+        setCurrent, setPageSize
+    } = props;
 
     const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
-    const [dataUpdate, setDataUpdate] = useState(null)
 
+    const [dataUpdate, setDataUpdate] = useState(null);
+
+    const [dataDetail, setDataDetail] = useState(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-    const [dataDetail, setDataDetail] = useState(null)
-
-    const handleDeleteUser = async (id) => {
-        const res = await deleteUserAPI(id);
-        if (res.data) {
-            notification.success({
-                message: 'Delete User Success',
-                description: 'Xóa User thành công',
-            })
-            await loadUser();
-        } else {
-            notification.error({
-                message: 'Error Delete User',
-                description: JSON.stringify(res.message),
-            })
-        }
-    }
 
     const columns = [
         {
             title: "STT",
             render: (_, record, index) => {
-                console.log("check index: ", index);
                 return (
-                    <>
-                        {index + 1}
-                    </>
+                    <>{(index + 1) + (current - 1) * pageSize}</>
                 )
             }
         },
+
         {
             title: 'Id',
             dataIndex: '_id',
             render: (_, record) => {
                 return (
-                    <a href="#"
+                    <a
+                        href='#'
                         onClick={() => {
                             setDataDetail(record);
                             setIsDetailOpen(true);
-                        }
-                        }> {record._id}</a>
+                        }}
+                    >{record._id}</a>
                 )
             }
         },
@@ -75,23 +62,56 @@ const UserTable = (props) => {
                             setDataUpdate(record);
                             setIsModalUpdateOpen(true);
                         }}
-                        style={{ cursor: "pointer", color: "orange" }}
-                    />
-
+                        style={{ cursor: "pointer", color: "orange" }} />
                     <Popconfirm
                         title="Xóa người dùng"
-                        description="Bạn có chắc xóa user này?"
+                        description="Bạn chắc chắn xóa user này ?"
                         onConfirm={() => handleDeleteUser(record._id)}
                         okText="Yes"
                         cancelText="No"
-                        placement='left'>
+                        placement="left"
+
+                    >
                         <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
                     </Popconfirm>
-
                 </div>
             ),
         },
     ];
+
+    const handleDeleteUser = async (id) => {
+        const res = await deleteUserAPI(id);
+        if (res.data) {
+            notification.success({
+                message: "Delete user",
+                description: "Xóa user thành công"
+            })
+            await loadUser();
+
+        } else {
+            notification.error({
+                message: "Error delete user",
+                description: JSON.stringify(res.message)
+            })
+        }
+    }
+
+    const onChange = (pagination, filters, sorter, extra) => {
+        // setCurrent, setPageSize
+        //nếu thay đổi trang : current
+        if (pagination && pagination.current) {
+            if (+pagination.current !== +current) {
+                setCurrent(+pagination.current) //"5" => 5
+            }
+        }
+
+        //nếu thay đổi tổng số phần tử : pageSize
+        if (pagination && pagination.pageSize) {
+            if (+pagination.pageSize !== +pageSize) {
+                setPageSize(+pagination.pageSize) //"5" => 5
+            }
+        }
+    };
 
     return (
         <>
@@ -99,8 +119,18 @@ const UserTable = (props) => {
                 columns={columns}
                 dataSource={dataUsers}
                 rowKey={"_id"}
-            />
+                pagination={
+                    {
+                        current: current,
+                        pageSize: pageSize,
+                        showSizeChanger: true,
+                        total: total,
+                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                    }
+                }
+                onChange={onChange}
 
+            />
             <UpdateUserModal
                 isModalUpdateOpen={isModalUpdateOpen}
                 setIsModalUpdateOpen={setIsModalUpdateOpen}
@@ -110,18 +140,14 @@ const UserTable = (props) => {
             />
 
             <ViewUserDetail
-                isDetailOpen={isDetailOpen}
-                setIsDetailOpen={setIsDetailOpen}
                 dataDetail={dataDetail}
                 setDataDetail={setDataDetail}
+                isDetailOpen={isDetailOpen}
+                setIsDetailOpen={setIsDetailOpen}
                 loadUser={loadUser}
             />
-
-
-
         </>
-    );
-
+    )
 }
 
 export default UserTable;
