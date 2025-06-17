@@ -33,6 +33,17 @@ const UserTable = (props) => {
 
     const columns = [
         {
+            title: "STT",
+            render: (_, record, index) => {
+                console.log("check index: ", index);
+                return (
+                    <>
+                        {index + 1}
+                    </>
+                )
+            }
+        },
+        {
             title: 'Id',
             dataIndex: '_id',
             render: (_, record) => {
@@ -103,6 +114,7 @@ const UserTable = (props) => {
                 setIsDetailOpen={setIsDetailOpen}
                 dataDetail={dataDetail}
                 setDataDetail={setDataDetail}
+                loadUser={loadUser}
             />
 
 
