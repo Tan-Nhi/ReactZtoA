@@ -1,4 +1,4 @@
-import { AuditOutlined, HomeOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { AuditOutlined, HomeOutlined, SettingOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { Menu } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -25,6 +25,21 @@ const Header = () => {
             key: 'book',
             icon: <AuditOutlined />,
 
+        },
+        {
+            label: 'Cài đặt',
+            key: 'setting',
+            icon: <SettingOutlined />,
+            children: [
+                {
+                    label: <Link to={"/login"}>Đăng nhập</Link>,
+                    key: 'login',
+                },
+                {
+                    label: 'Đăng xuất',
+                    key: 'logout',
+                },
+            ],
         },
 
     ];
