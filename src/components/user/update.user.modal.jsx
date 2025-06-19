@@ -15,14 +15,13 @@ const UpdateUserModal = (props) => {
 
     //next dataUpdate != prev dataUpdate
     useEffect(() => {
-        console.log(">> check dataUpdate props: ", dataUpdate);
         if (dataUpdate) {
             setId(dataUpdate._id);
             setFullName(dataUpdate.fullName);
             setPhone(dataUpdate.phone);
         }
     }, [dataUpdate])
-    
+
     const handSubmitBtn = async () => {
         const res = await updateUserAPI(id, fullName, phone)
         if (res.data) {
