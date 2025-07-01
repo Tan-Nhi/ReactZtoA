@@ -1,23 +1,16 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Popconfirm, Table, notification } from 'antd';
+import { Button, Popconfirm, Table } from 'antd';
 import { useState } from 'react';
-import { deleteUserAPI } from '../../services/api.service';
-import UpdateUserModal from './update.user.modal';
-import ViewUserDetail from './view.user.detail';
 
-const UserTable = (props) => {
-    const { dataUsers, loadUser,
+const BookTable = (props) => {
+
+    const { dataBooks, loadBook,
         current, pageSize, total,
         setCurrent, setPageSize
     } = props;
 
-    const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
-
-    const [dataUpdate, setDataUpdate] = useState(null);
-
     const [dataDetail, setDataDetail] = useState(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
-
     const columns = [
         {
             title: "STT",
@@ -27,7 +20,6 @@ const UserTable = (props) => {
                 )
             }
         },
-
         {
             title: 'Id',
             dataIndex: '_id',
@@ -44,12 +36,25 @@ const UserTable = (props) => {
             }
         },
         {
-            title: 'Full Name',
-            dataIndex: 'fullName',
+            title: 'Tiêu đề',
+            dataIndex: 'mainText',
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
+            title: 'Giá tiền',
+            dataIndex: 'price',
+            render: (text, record, index, action) => {
+                if (text)
+                    return new Intl.NumberFormat('vi-VN',
+                        { style: "currency", currency: 'VND' }).format(text)
+            },
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+        },
+        {
+            title: 'Tác giả',
+            dataIndex: 'author',
         },
         {
             title: 'Action',
@@ -57,19 +62,14 @@ const UserTable = (props) => {
             render: (_, record) => (
                 <div style={{ display: "flex", gap: "20px" }}>
                     <EditOutlined
-                        onClick={() => {
-                            setDataUpdate(record);
-                            setIsModalUpdateOpen(true);
-                        }}
+
                         style={{ cursor: "pointer", color: "orange" }} />
                     <Popconfirm
                         title="Xóa người dùng"
                         description="Bạn chắc chắn xóa user này ?"
-                        onConfirm={() => handleDeleteUser(record._id)}
                         okText="Yes"
                         cancelText="No"
                         placement="left"
-
                     >
                         <DeleteOutlined style={{ cursor: "pointer", color: "red" }} />
                     </Popconfirm>
@@ -77,23 +77,6 @@ const UserTable = (props) => {
             ),
         },
     ];
-
-    const handleDeleteUser = async (id) => {
-        const res = await deleteUserAPI(id);
-        if (res.data) {
-            notification.success({
-                message: "Delete user",
-                description: "Xóa user thành công"
-            })
-            await loadUser();
-
-        } else {
-            notification.error({
-                message: "Error delete user",
-                description: JSON.stringify(res.message)
-            })
-        }
-    }
 
     const onChange = (pagination, filters, sorter, extra) => {
         // setCurrent, setPageSize
@@ -111,12 +94,21 @@ const UserTable = (props) => {
             }
         }
     };
-
     return (
         <>
+            <div style={{
+                marginTop: "10px",
+                display: "flex",
+                justifyContent: "space-between"
+            }}>
+
+                <h3>Table Book</h3>
+                <Button type='primary'>Create Book</Button>
+                /</div>
+
             <Table
                 columns={columns}
-                dataSource={dataUsers}
+                dataSource={dataBooks}
                 rowKey={"_id"}
                 pagination={
                     {
@@ -128,25 +120,10 @@ const UserTable = (props) => {
                     }
                 }
                 onChange={onChange}
+            />;
 
-            />
-            <UpdateUserModal
-                isModalUpdateOpen={isModalUpdateOpen}
-                setIsModalUpdateOpen={setIsModalUpdateOpen}
-                dataUpdate={dataUpdate}
-                setDataUpdate={setDataUpdate}
-                loadUser={loadUser}
-            />
-
-            <ViewUserDetail
-                dataDetail={dataDetail}
-                setDataDetail={setDataDetail}
-                isDetailOpen={isDetailOpen}
-                setIsDetailOpen={setIsDetailOpen}
-                loadUser={loadUser}
-            />
         </>
-    )
+    );
 }
 
-export default UserTable;
+export default BookTable
