@@ -73,7 +73,7 @@ const loginAPI = (email, password) => {
     const data = {
         username: email,
         password: password,
-        delay: 5000 // Giả lập delay 5 giây
+        delay: 2000 // Giả lập delay 2 giây
     }
     return axios.post(URL_BACKEND, data)
 }
@@ -95,11 +95,42 @@ const fetchAllBookAPI = (current, pageSize) => {
     return axios.get(URL_BACKEND);
 }
 
+const createBookAPI = (thumbnail, mainText, author, price, quantity, category) => {
+    const URL_BACKEND = "/api/v1/book";
+    const data = {
+        thumbnail: thumbnail,
+        mainText: mainText,
+        author: author,
+        price: price,
+        quantity: quantity,
+        category: category
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const updateBookAPI = (_id, thumbnail, mainText, author, price, quantity, category) => {
+    const URL_BACKEND = `/api/v1/book`;
+    const data = {
+        _id: _id,
+        thumbnail: thumbnail,
+        mainText: mainText,
+        author: author,
+        price: price,
+        quantity: quantity,
+        category: category
+    }
+    return axios.put(URL_BACKEND, data)
+}
+
+const deleteBookAPI = (id) => {
+    const URL_BACKEND = `/api/v1/book/${id}`; //backtick ` `
+    return axios.delete(URL_BACKEND)
+}
 
 export {
     createUserAPI, updateUserAPI, fetchAllUserAPI,
     deleteUserAPI, handleUploadFile, updateUserAvatarAPI,
     registerUserAPI, loginAPI, getAccountAPI, logoutAPI,
-    fetchAllBookAPI
+    fetchAllBookAPI, createBookAPI, updateBookAPI, deleteBookAPI
 };
 

@@ -1,6 +1,13 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Table } from 'antd';
+import { Button, Modal, notification, Popconfirm, Table } from 'antd';
 import { useState } from 'react';
+import BookDetail from './book.detail';
+import CreateBookController from './create.book.controller';
+import CreateBookUncontrol from './create.book.uncontrol';
+import UpdateBookController from './update.book.controller';
+import UpdateBookUncontrol from './update.book.uncontrol';
+import { deleteBookAPI } from '../../services/api.service';
+
 
 const BookTable = (props) => {
 
@@ -11,6 +18,13 @@ const BookTable = (props) => {
 
     const [dataDetail, setDataDetail] = useState(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+    const [dataUpdate, setDataUpdate] = useState(null);
+
+
     const columns = [
         {
             title: "STT",
@@ -62,11 +76,15 @@ const BookTable = (props) => {
             render: (_, record) => (
                 <div style={{ display: "flex", gap: "20px" }}>
                     <EditOutlined
-
+                        onClick={() => {
+                            setIsUpdateOpen(true);
+                            setDataUpdate(record);
+                        }}
                         style={{ cursor: "pointer", color: "orange" }} />
                     <Popconfirm
-                        title="Xóa người dùng"
-                        description="Bạn chắc chắn xóa user này ?"
+                        title="Xóa Book "
+                        description="Bạn chắc chắn xóa book này ?"
+                        onConfirm={() => handleDeleteUser(record._id)}
                         okText="Yes"
                         cancelText="No"
                         placement="left"
@@ -94,18 +112,62 @@ const BookTable = (props) => {
             }
         }
     };
+
+    const handleDeleteUser = async (id) => {
+        const res = await deleteBookAPI(id);
+        if (res.data) {
+            notification.success({
+                message: "Delete book",
+                description: "Xóa book thành công"
+            })
+            await loadBook();
+
+        } else {
+            notification.error({
+                message: "Error delete book",
+                description: JSON.stringify(res.message)
+            })
+        }
+    }
+
+
     return (
         <>
             <div style={{
-                marginTop: "10px",
+                margin: "10px 0",
                 display: "flex",
                 justifyContent: "space-between"
             }}>
-
                 <h3>Table Book</h3>
-                <Button type='primary'>Create Book</Button>
-                /</div>
+                {/* <CreateBookController
+                    loadBook={loadBook}
+                    isCreateOpen={isCreateOpen}
+                    setIsCreateOpen={setIsCreateOpen}
+                /> */}
 
+                <CreateBookUncontrol
+                    loadBook={loadBook}
+                    isCreateOpen={isCreateOpen}
+                    setIsCreateOpen={setIsCreateOpen}
+                />
+
+
+                {/* <UpdateBookController
+                    loadBook={loadBook}
+                    isUpdateOpen={isUpdateOpen}
+                    setIsUpdateOpen={setIsUpdateOpen}
+                    dataUpdate={dataUpdate}
+                    setDataUpdate={setDataUpdate}
+                /> */}
+
+                <UpdateBookUncontrol
+                    loadBook={loadBook}
+                    isUpdateOpen={isUpdateOpen}
+                    setIsUpdateOpen={setIsUpdateOpen}
+                    dataUpdate={dataUpdate}
+                    setDataUpdate={setDataUpdate}
+                />
+            </div>
             <Table
                 columns={columns}
                 dataSource={dataBooks}
@@ -120,7 +182,16 @@ const BookTable = (props) => {
                     }
                 }
                 onChange={onChange}
-            />;
+            />
+
+            <BookDetail
+                dataDetail={dataDetail}
+                setDataDetail={setDataDetail}
+                isDetailOpen={isDetailOpen}
+                setIsDetailOpen={setIsDetailOpen}
+                loadBook={loadBook}
+            />
+
 
         </>
     );
