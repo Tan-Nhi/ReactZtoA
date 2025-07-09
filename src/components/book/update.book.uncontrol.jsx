@@ -1,4 +1,4 @@
-import { Col, Form, Input, InputNumber, Modal, notification, Row, Select } from "antd"
+import { Button, Col, Form, Input, InputNumber, Modal, notification, Row, Select } from "antd"
 import { useEffect, useState } from "react"
 import { handleUploadFile, updateBookAPI } from "../../services/api.service"
 
@@ -8,6 +8,8 @@ const UpdateBookUncontrol = (props) => {
 
     const [selectedFile, setSelectedFile] = useState(null)
     const [preview, setPreview] = useState(null)
+
+    const [loading, setLoading] = useState(false);
 
     const handleOnChangeFile = (event) => {
         if (!event.target.files || event.target.files.length === 0) {
@@ -52,6 +54,8 @@ const UpdateBookUncontrol = (props) => {
     const updateBook = async (newThumbnail, values) => {
         const { id, mainText, author, price, quantity, category } = values;
         const resBook = await updateBookAPI(id, newThumbnail, mainText, author, price, quantity, category);
+        setLoading(true)
+        await new Promise(resolve => setTimeout(resolve, 2000));
         if (resBook.data) {
             resetAndCloseModel()
             await loadBook();
@@ -65,6 +69,7 @@ const UpdateBookUncontrol = (props) => {
                 description: JSON.stringify(resBook.message)
             })
         }
+        setLoading(false)
     }
 
     const handSubmitBtn = async (values) => {
@@ -109,6 +114,14 @@ const UpdateBookUncontrol = (props) => {
                 onCancel={() => resetAndCloseModel()}
                 maskClosable={false}
                 okText={"Update"}
+                footer={[
+                    <Button key="cancel" onClick={() => { resetAndCloseModel() }}>Cancel</Button>,
+                    <Button key="submit"
+                        loading={loading}
+                        type="primary"
+                        onClick={() => { form.submit() }}>Update</Button>
+
+                ]}
             >
                 <Form
                     layout='vertical'

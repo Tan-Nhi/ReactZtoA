@@ -8,7 +8,8 @@ import ViewUserDetail from './view.user.detail';
 const UserTable = (props) => {
     const { dataUsers, loadUser,
         current, pageSize, total,
-        setCurrent, setPageSize
+        setCurrent, setPageSize,
+        loadingTable,
     } = props;
 
     const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
@@ -128,7 +129,7 @@ const UserTable = (props) => {
                     }
                 }
                 onChange={onChange}
-
+                loading={loadingTable}
             />
             <UpdateUserModal
                 isModalUpdateOpen={isModalUpdateOpen}

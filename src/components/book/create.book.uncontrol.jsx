@@ -9,6 +9,8 @@ const CreateBookUncontrol = (props) => {
     const [selectedFile, setSelectedFile] = useState(null)
     const [preview, setPreview] = useState(null)
 
+    const [loading, setLoading] = useState(false);
+
 
     const handleOnChangeFile = (event) => {
         if (!event.target.files || event.target.files.length === 0) {
@@ -37,6 +39,7 @@ const CreateBookUncontrol = (props) => {
             })
             return;
         }
+        setLoading(true)
         const resUpload = await handleUploadFile(selectedFile, "book");
         if (resUpload.data) {
             //success
@@ -46,6 +49,7 @@ const CreateBookUncontrol = (props) => {
                 newThumbnail, mainText, author, price, quantity, category
             );
 
+            await new Promise(resolve => setTimeout(resolve, 2000));
             if (resBook.data) {
                 resetAndCloseModel()
                 await loadBook();
@@ -60,7 +64,7 @@ const CreateBookUncontrol = (props) => {
                 })
             }
         }
-
+        setLoading(false)
     }
 
 
@@ -74,12 +78,23 @@ const CreateBookUncontrol = (props) => {
     return (
         <>
             <Button type="primary" onClick={() => { setIsCreateOpen(true) }}>Create Book</Button>
+
             <Modal
                 open={isCreateOpen}
-                onOk={() => { form.submit() }}
+                onOk={() => {
+                    form.submit()
+                }}
                 onCancel={() => { resetAndCloseModel() }}
                 maskClosable={false}
                 okText={"CREATE"}
+                footer={[
+                    <Button key="cancel" onClick={() => { resetAndCloseModel() }}>Cancel</Button>,
+                    <Button key="submit"
+                        loading={loading}
+                        type="primary"
+                        onClick={() => { form.submit() }}>CREATE</Button>
+
+                ]}
             >
 
                 <Form
@@ -210,7 +225,6 @@ const CreateBookUncontrol = (props) => {
                             </div>
                         </Col>
                     </Row>
-
                 </Form>
             </Modal>
         </>

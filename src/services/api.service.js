@@ -103,7 +103,7 @@ const createBookAPI = (thumbnail, mainText, author, price, quantity, category) =
         author: author,
         price: price,
         quantity: quantity,
-        category: category
+        category: category,
     }
     return axios.post(URL_BACKEND, data)
 }
