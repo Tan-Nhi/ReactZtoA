@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, Input, message, notification, Row } from "antd";
+import { App, Button, Col, Divider, Form, Input, message, Row } from "antd";
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from "react-router-dom";
 import { loginAPI } from "../services/api.service";
@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../components/context/auth.context";
 
 const LoginPage = () => {
+    const { message, notification } = App.useApp();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

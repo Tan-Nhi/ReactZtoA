@@ -21,8 +21,14 @@ const TodoNew = (props) => {
     return (
         <div className="todo-new">
             <input type="text" placeholder='Enter your task'
-                onChange={(event) => handOnchange(event.target.value)}
+                onChange={(event) =>
+                    handOnchange(event.target.value)}
                 value={valueInput}
+                onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                        handClick();
+                    }
+                }}
             />
             <button
                 style={{ cursor: "pointer" }}

@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { App as AppAntd } from 'antd';
 import LoginPage from './pages/login.jsx';
 import RegisterPage from './pages/register.jsx';
 import UserPage from './pages/user.jsx';
@@ -18,7 +19,7 @@ import 'nprogress/nprogress.css';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <AppAntd><App /></AppAntd>,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: <AppAntd><LoginPage /></AppAntd>,
   },
   {
     path: "/register",
